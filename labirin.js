@@ -1,5 +1,5 @@
 const DIR_PRIORITY = "URDL";
-const DIR_LABEL = ["BAWAH", "KANAN", "ATAS", "KIRI"];
+const DIR_LABEL = ["ATAS", "KANAN", "BAWAH", "KIRI"];
 const DIR_ROW_ACTION = [-1, 0, 1, 0];
 const DIR_COL_ACTION = [0, 1, 0, -1];
 
