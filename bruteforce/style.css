@@ -1,6 +1,7 @@
 #maps-container {
 	display: grid;
-	grid-template-columns: repeat(6, 50px);
+	grid-template-columns: repeat(var(--cols), 50px);
+	grid-template-rows: repeat(var(--rows), 50px);
 }
 
 .cell {

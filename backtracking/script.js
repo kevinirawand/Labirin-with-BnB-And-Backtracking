@@ -108,6 +108,9 @@ function moveMouse(row, col) {
 
 document.addEventListener("DOMContentLoaded", () => {
    const mapsContainer = document.getElementById("maps-container");
+   mapsContainer.style.setProperty("--cols", MAPS_WIDTH);
+   mapsContainer.style.setProperty("--rows", MAPS_HEIGHT);
+
    const runBtn = document.getElementById("run-btn");
 
    for (let row = 0; row < MAPS_HEIGHT; row++) {
