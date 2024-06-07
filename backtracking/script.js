@@ -36,8 +36,6 @@ function findWay(row, col) {
    moveMouse(row, col);
 
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
-      console.info(currentPath)
-      rightWays.push(currentPath);
       simpulDaunCount++;
       return true;
    }
@@ -49,17 +47,15 @@ function findWay(row, col) {
 
    maps[row][col] = 0;
 
-   let currentPathIndex = 0;
    let isSimpulDaun = true;
 
    for (let i = 0; i < 4; i++) {
       currentPathIndex = i;
       const nextRow = row + DIR_ROW_ACTION[i];
       const nextCol = col + DIR_COL_ACTION[i];
-      console.info(`Tikus lihat ke arah ${DIR_LABEL[i]}`);
 
       if (findWay(nextRow, nextCol)) {
-         console.info(`BERGERAK KE : ${DIR_LABEL[i]}`);
+         moveMouse(nextRow, nextCol);
          currentPath += DIR_PRIORITY[i];
          isSimpulDaun = false;
          return true;
@@ -71,9 +67,6 @@ function findWay(row, col) {
    }
 
    maps[row][col] = 1;
-   moveMouse(row - DIR_ROW_ACTION[currentPathIndex], col - DIR_COL_ACTION[currentPathIndex]);
-   // currentPath = currentPath.slice(0, -1);
-   // console.info(currentPath)
    return false;
 }
 
