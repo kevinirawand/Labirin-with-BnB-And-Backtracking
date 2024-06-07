@@ -165,6 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
          for (let i = 0; i < rightWays.length; i++) {
             const rightWaysEl = document.createElement("p");
             rightWaysEl.innerHTML = `${i + 1}. ${convertPath(rightWays[i])}`;
+            resultInfoContainer.appendChild(rightWaysEl)
+
          }
       } else {
          console.error("Format maps tidak valid");

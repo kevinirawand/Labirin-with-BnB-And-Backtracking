@@ -36,6 +36,7 @@ function findWay(row, col) {
    moveMouse(row, col);
 
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
+      console.info(currentPath)
       rightWays.push(currentPath);
       simpulDaunCount++;
       return true;
@@ -59,7 +60,7 @@ function findWay(row, col) {
 
       if (findWay(nextRow, nextCol)) {
          console.info(`BERGERAK KE : ${DIR_LABEL[i]}`);
-         currentPath += DIR_LABEL[i];
+         currentPath += DIR_PRIORITY[i];
          isSimpulDaun = false;
          return true;
       }
@@ -71,7 +72,8 @@ function findWay(row, col) {
 
    maps[row][col] = 1;
    moveMouse(row - DIR_ROW_ACTION[currentPathIndex], col - DIR_COL_ACTION[currentPathIndex]);
-   currentPath = currentPath.slice(0, -1);
+   // currentPath = currentPath.slice(0, -1);
+   // console.info(currentPath)
    return false;
 }
 
@@ -153,6 +155,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
          resultInfoContainer.appendChild(execTimeEl)
          resultInfoContainer.appendChild(simpulDaunEl)
+
+         console.info(currentPath.split('').reverse().join(''))
+         const pathFormatted = convertPath(currentPath.split('').reverse().join(''));
+         console.info(pathFormatted)
+
+         const rightWaysEl = document.createElement("p");
+         rightWaysEl.innerHTML = pathFormatted;
+         resultInfoContainer.appendChild(rightWaysEl)
       } else {
          console.error("Format maps tidak valid")
       }
