@@ -5,6 +5,7 @@ const DIR_COL_ACTION = [0, 1, 0, -1];
 
 let currentPath = "";
 const rightWays = [];
+let simpulDaunCount = 0;
 
 let maps = [
    [1, 0, 0, 0, 0, 0],
@@ -36,16 +37,19 @@ function findWay(row, col) {
 
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
       rightWays.push(currentPath);
+      simpulDaunCount++;
       return true;
    }
 
    if (!isValidWay(row, col)) {
+      simpulDaunCount++;
       return false;
    }
 
    maps[row][col] = 0;
 
    let currentPathIndex = 0;
+   let isSimpulDaun = true;
 
    for (let i = 0; i < 4; i++) {
       currentPathIndex = i;
@@ -56,12 +60,16 @@ function findWay(row, col) {
       if (findWay(nextRow, nextCol)) {
          console.info(`BERGERAK KE : ${DIR_LABEL[i]}`);
          currentPath += DIR_LABEL[i];
+         isSimpulDaun = false;
          return true;
       }
    }
 
-   maps[row][col] = 1;
+   if (isSimpulDaun) {
+      simpulDaunCount++;
+   }
 
+   maps[row][col] = 1;
    moveMouse(row - DIR_ROW_ACTION[currentPathIndex], col - DIR_COL_ACTION[currentPathIndex]);
    currentPath = currentPath.slice(0, -1);
    return false;
@@ -85,7 +93,6 @@ function convertPath(path) {
 }
 
 let mouseElement = null;
-
 
 function updateCellColor(row, col) {
    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
@@ -131,7 +138,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
    runBtn.addEventListener("click", () => {
       if (maps[0][0] !== 0 && maps[MAPS_HEIGHT - 1][MAPS_WIDTH - 1] !== 0) {
+         const startTime = performance.now();
+         simpulDaunCount = 0;
          findWay(0, 0);
+         const endTime = performance.now();
+         const executionTime = (endTime - startTime).toFixed(2);
+
+         const resultInfoContainer = document.getElementById('result-info');
+
+         const execTimeEl = document.createElement("p");
+         execTimeEl.innerHTML = `Waktu eksekusi: ${executionTime} ms`;
+         const simpulDaunEl = document.createElement("p");
+         simpulDaunEl.innerHTML = `Jumlah simpul daun yang dieksplorasi: ${simpulDaunCount}`;
+
+         resultInfoContainer.appendChild(execTimeEl)
+         resultInfoContainer.appendChild(simpulDaunEl)
       } else {
          console.error("Format maps tidak valid")
       }

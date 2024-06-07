@@ -5,6 +5,7 @@ const DIR_COL_ACTION = [0, 1, 0, -1];
 
 let currentPath = "";
 const rightWays = [];
+let simpulDaunCount = 0;
 
 let maps = [
    [1, 0, 0, 0, 0, 0],
@@ -24,6 +25,24 @@ let maps = [
    [0, 0, 1, 1, 1, 1],
 ];
 
+// let maps = [
+//    [1, 0, 1, 0, 0, 0],
+//    [1, 0, 0, 1, 1, 0],
+//    [1, 1, 1, 0, 1, 0],
+//    [1, 0, 0, 0, 1, 0],
+//    [1, 1, 1, 1, 1, 0],
+//    [0, 0, 1, 0, 0, 0],
+//    [0, 1, 1, 1, 1, 0],
+//    [0, 0, 0, 1, 1, 0],
+//    [0, 1, 1, 1, 1, 0],
+//    [0, 1, 0, 0, 0, 0],
+//    [1, 1, 1, 1, 1, 0],
+//    [0, 0, 0, 1, 0, 0],
+//    [0, 0, 1, 1, 1, 0],
+//    [0, 0, 1, 0, 1, 0],
+//    [0, 0, 0, 1, 1, 1],
+// ];
+
 const MAPS_WIDTH = maps[0].length;
 const MAPS_HEIGHT = maps.length;
 
@@ -34,23 +53,31 @@ function isValidWay(row, col) {
 function findWay(row, col) {
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
       rightWays.push(currentPath);
+      simpulDaunCount++;
       return true;
    }
 
    if (!isValidWay(row, col)) {
+      simpulDaunCount++;
       return false;
    }
 
    maps[row][col] = 0;
+   let isSimpulDaun = true;
 
    for (let i = 0; i < 4; i++) {
       const nextRow = row + DIR_ROW_ACTION[i];
       const nextCol = col + DIR_COL_ACTION[i];
       currentPath += DIR_PRIORITY[i];
 
-      moveMouse(nextRow, nextCol);
       findWay(nextRow, nextCol);
+      moveMouse(nextRow, nextCol);
+      isSimpulDaun = false;
       currentPath = currentPath.slice(0, -1);
+   }
+
+   if (isSimpulDaun) {
+      simpulDaunCount++;
    }
 
    maps[row][col] = 1;
@@ -90,7 +117,6 @@ function moveMouse(row, col) {
    const y = row * cellHeight + cellHeight / 2;
 
    mouseElement.style.transform = `translate(${x}px, ${y}px)`;
-
    updateCellColor(row, col);
 }
 
@@ -121,11 +147,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
    runBtn.addEventListener("click", () => {
       if (maps[0][0] !== 0 && maps[MAPS_HEIGHT - 1][MAPS_WIDTH - 1] !== 0) {
+         const startTime = performance.now();
+         simpulDaunCount = 0;
          findWay(0, 0);
-         if (rightWays.length > 0) {
-            rightWays.forEach(path => {
-               console.info(convertPath(path));
-            });
+         const endTime = performance.now();
+         const executionTime = (endTime - startTime).toFixed(2);
+
+         const resultInfoContainer = document.getElementById('result-info');
+
+         const execTimeEl = document.createElement("p");
+         execTimeEl.innerHTML = `Waktu eksekusi: ${executionTime} ms`;
+         const simpulDaunEl = document.createElement("p");
+         simpulDaunEl.innerHTML = `Jumlah simpul daun yang dieksplorasi: ${simpulDaunCount}`;
+
+         resultInfoContainer.appendChild(execTimeEl)
+         resultInfoContainer.appendChild(simpulDaunEl)
+         for (let i = 0; i < rightWays.length; i++) {
+            const rightWaysEl = document.createElement("p");
+            rightWaysEl.innerHTML = `${i + 1}. ${convertPath(rightWays[i])}`;
          }
       } else {
          console.error("Format maps tidak valid");

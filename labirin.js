@@ -74,12 +74,26 @@ function convertPath(path) {
 }
 
 if (maps[0][0] !== 0 && maps[MAPS_HEIGHT - 1][MAPS_WIDTH - 1] !== 0) {
+   const startTime = performance.now();
+   simpulDaunCount = 0;
    findWay(0, 0);
+   const endTime = performance.now();
+   const executionTime = (endTime - startTime).toFixed(2);
+
+   const resultInfoContainer = document.getElementById('result-info');
+
+   const execTimeEl = document.createElement("p");
+   execTimeEl.innerHTML = `Waktu eksekusi: ${executionTime} ms`;
+   const simpulDaunEl = document.createElement("p");
+   simpulDaunEl.innerHTML = `Jumlah simpul daun yang dieksplorasi: ${simpulDaunCount}`;
+
+   resultInfoContainer.appendChild(execTimeEl)
+   resultInfoContainer.appendChild(simpulDaunEl)
+   for (let i = 0; i < rightWays.length; i++) {
+      const rightWaysEl = document.createElement("p");
+      rightWaysEl.innerHTML = `${i + 1}. ${convertPath(rightWays[i])}`;
+   }
 } else {
    console.error("Format maps tidak valid")
 }
 
-console.info("JALAN KELUAR :")
-for (let i = 0; i < rightWays.length; i++) {
-   console.info(`${i + 1}. ${convertPath(rightWays[i])}`);
-}
