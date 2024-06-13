@@ -33,40 +33,57 @@ function isValidWay(row, col) {
 }
 
 function findWay(row, col) {
+   // gerakin tikus nya
    moveMouse(row, col);
 
+   // cek apakah dia cell pintu keluar
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
       simpulDaunCount++;
       return true;
    }
 
+   // cek apakah dia bukan jalan yg benar
    if (!isValidWay(row, col)) {
       simpulDaunCount++;
       return false;
    }
 
+   // tandain bahwa jalan sekarang udah dia lewatin
    maps[row][col] = 0;
 
+   // inisialisasi untuk cek apakah cell saat ini simpul daun
    let isSimpulDaun = true;
 
+   // tengok semua arah (atas, kanan, bawah, kiri)
    for (let i = 0; i < 4; i++) {
-      currentPathIndex = i;
+      // tampung posisi next row & next col dari cell sekarang berdasar prioritas yg dibuat
       const nextRow = row + DIR_ROW_ACTION[i];
       const nextCol = col + DIR_COL_ACTION[i];
 
+      // jika findWay true alias menemukan jalan
       if (findWay(nextRow, nextCol)) {
+         // gerakin tikus nya
          moveMouse(nextRow, nextCol);
+
+         // tampung arah yg findWay nya true
          currentPath += DIR_PRIORITY[i];
+
+         // kalau menemukan jalan artinya dia punya anak artinya dia bukan simpul daun
          isSimpulDaun = false;
+
          return true;
       }
    }
 
+   // kalau isSimpulDaun masih true
    if (isSimpulDaun) {
+      // tambah jumlah simpul daun
       simpulDaunCount++;
    }
 
+   // backtracking
    maps[row][col] = 1;
+
    return false;
 }
 

@@ -25,24 +25,6 @@ let maps = [
    [0, 0, 1, 1, 1, 1],
 ];
 
-// let maps = [
-//    [1, 0, 1, 0, 0, 0],
-//    [1, 0, 0, 1, 1, 0],
-//    [1, 1, 1, 0, 1, 0],
-//    [1, 0, 0, 0, 1, 0],
-//    [1, 1, 1, 1, 1, 0],
-//    [0, 0, 1, 0, 0, 0],
-//    [0, 1, 1, 1, 1, 0],
-//    [0, 0, 0, 1, 1, 0],
-//    [0, 1, 1, 1, 1, 0],
-//    [0, 1, 0, 0, 0, 0],
-//    [1, 1, 1, 1, 1, 0],
-//    [0, 0, 0, 1, 0, 0],
-//    [0, 0, 1, 1, 1, 0],
-//    [0, 0, 1, 0, 1, 0],
-//    [0, 0, 0, 1, 1, 1],
-// ];
-
 const MAPS_WIDTH = maps[0].length;
 const MAPS_HEIGHT = maps.length;
 
@@ -51,36 +33,54 @@ function isValidWay(row, col) {
 }
 
 function findWay(row, col) {
+   // cek apakah dia cell pintu keluar
    if (row === MAPS_HEIGHT - 1 && col === MAPS_WIDTH - 1) {
       rightWays.push(currentPath);
       simpulDaunCount++;
       return true;
    }
 
+   // cek apakah dia bukan jalan yg benar
    if (!isValidWay(row, col)) {
       simpulDaunCount++;
       return false;
    }
 
+   // tandain bahwa jalan sekarang udah dia lewatin
    maps[row][col] = 0;
+
+   // inisialisasi untuk cek apakah cell saat ini simpul daun
    let isSimpulDaun = true;
 
+   // tengok semua arah (atas, kanan, bawah, kiri)
    for (let i = 0; i < 4; i++) {
+      // tampung posisi next row & next col dari cell sekarang berdasar prioritas yg dibuat
       const nextRow = row + DIR_ROW_ACTION[i];
       const nextCol = col + DIR_COL_ACTION[i];
+
+      // tambahkan semua arah yg akan dicoba
       currentPath += DIR_PRIORITY[i];
 
-      findWay(nextRow, nextCol);
+      // secara recursive, iterasi lagi sampai menemukan pintu keluar
+      const isFindWay = findWay(nextRow, nextCol);
+
+      // gerakin tikus nya
       moveMouse(nextRow, nextCol);
-      isSimpulDaun = false;
+
+      // kalau menemukan jalan artinya dia punya anak artinya dia bukan simpul daun
+      if (isFindWay) {
+         isSimpulDaun = false;
+      }
+
+      // callback rekursif potong 1 huruf paling belakang (index -1) dari currentPath
       currentPath = currentPath.slice(0, -1);
    }
 
+   // kalau isSimpulDaun masih true
    if (isSimpulDaun) {
+      // tambah jumlah simpul daun
       simpulDaunCount++;
    }
-
-   maps[row][col] = 1;
 
    return false;
 }
@@ -165,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
          resultInfoContainer.appendChild(execTimeEl)
          resultInfoContainer.appendChild(simpulDaunEl)
+         console.info(rightWays)
          for (let i = 0; i < rightWays.length; i++) {
             const rightWaysEl = document.createElement("p");
             rightWaysEl.innerHTML = `${i + 1}. ${convertPath(rightWays[i])}`;
